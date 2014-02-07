@@ -1,0 +1,36 @@
+Command Line
+
+- What is it and why is it important
+- Terminology
+  - command line (interface), shell
+  - bash, sh, zsh
+  - terminal, powershell, cygwin, MSYS
+  - vi, vim, emacs
+  - kernel
+
+- Commands
+  - hostname
+  - pwd
+  - up arrow!
+  - mkdir
+  - cd
+  - ls, ls -la
+  - touch
+  - cp, cp -a
+  - mv
+  - less, cat, q
+  - rm, rmdir, rm -rf
+
+  - More Commands
+    - find, grep
+    - sudo
+    - chmod, chown
+    - redirects ( >, >>, <, | )
+
+- Differences in appearance and settings
+  - iTerm
+  - subl (open)
+  - .bash_profile
+    - path
+    - colors
+    - prompt

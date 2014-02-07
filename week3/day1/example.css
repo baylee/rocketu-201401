@@ -1,0 +1,45 @@
+div {
+  background-color: blue;
+  width: 100px;
+  height: 100px;
+  margin: 10px;
+  border: 5px solid gold;
+}
+
+div:nth-child(2) {
+  background-color: black;
+}
+
+.parent {
+  width: 100%;
+  background-color: gray;
+  height: auto;
+}
+
+div.rocketu {
+  background-color: red;
+}
+
+div.rocketu:after {
+  content: "Hello";
+}
+
+.clear {
+  height: 0;
+  width: 0;
+  border: none;
+  clear: both;
+}
+
+@media (max-width: 940px) {
+    .parent {
+        background-color: red;
+    }
+}
+
+
+
+
+
+
+

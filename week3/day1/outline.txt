@@ -1,0 +1,31 @@
+Intro
+- Baylee and Yeti
+
+HTML
+- What is html?
+- History of html
+- Build a page from scratch
+- HTML forms and form submission (types of http requests)
+
+CSS
+- what is css
+- box model
+  - what is it
+  - defaults & display types (none, hidden, block, inline-block, inline)
+- priority
+  - cascade order
+    - external link
+    - in the <head>
+    - inline style
+    - using !important
+  - inheritance and specificity
+    - inline styles
+    - # of id selectors
+    - # of class selectors
+    - # of element selectors
+- floats
+- clearing floats
+- positioning (static, relative, absolute, fixed)
+- selectors you must know
+- animations
+- media queries

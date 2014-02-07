@@ -1,0 +1,7 @@
+GIT
+- What is git and why is it important
+
+
+HEROKU
+- What is Heroku and why is it cool
+- Deploying your first project
