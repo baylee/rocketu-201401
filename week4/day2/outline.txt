@@ -3,5 +3,5 @@ GIT
 
 
 HEROKU
-- What is Heroku and why is it cool
+- What is Heroku and why is it awesome
 - Deploying your first project
