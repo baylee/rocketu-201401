@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit movie</title>
+</head>
+<body>
+<h1>Edit movie {{ movie.name }}</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Update movie">
+</form>
+</body>
+</html>

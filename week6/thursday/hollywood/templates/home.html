@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block title %}Hollywood{% endblock %}
+{% block main %}
+    <h1>Welcome to Hollywood!</h1>
+    <a href="{% url "movies" %}">Movies</a>
+    <a href="{% url "actors" %}">Actors</a>
+{% endblock %}
