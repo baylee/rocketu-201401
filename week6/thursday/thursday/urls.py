@@ -14,4 +14,7 @@ urlpatterns = patterns('',
     url(r'^movies/(?P<movie_id>\w+)/delete/$', 'hollywood.views.delete_movie', name='delete_movie'),
 
     url(r'^actors/$', 'hollywood.views.actors', name='actors'),
+
+    url(r'^ajaxiness/$', 'hollywood.views.ajaxiness', name='ajaxiness'),
+    url(r'^more_information/$', 'hollywood.views.more_information', name='more_information'),
 )

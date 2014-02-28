@@ -1,4 +1,6 @@
 # Create your views here.
+from django.core.serializers import json
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from hollywood.forms import MovieForm
 from hollywood.models import Movie, Actor
@@ -47,3 +49,11 @@ def delete_movie(request, movie_id):
 def actors(request):
     actors = Actor.objects.all()
     return render(request, "actors/actors.html", {'actors': actors})
+
+
+def ajaxiness(request):
+    return HttpResponse("hello")
+
+def more_information(request):
+    data = {"info": "baylee is cool"}
+    return render(request, "more_information.html", data)
