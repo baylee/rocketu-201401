@@ -1,0 +1,15 @@
+{% load cache %}
+
+<html>
+    <body>
+        {% cache 600 my_awesome_cache request.user.is_staff %}
+            <h1>Hello!!!!</h1>
+
+            {% if request.user.is_staff %}
+                <h2>Hi Admin!!!!</h2>
+            {% endif %}
+        {% endcache %}
+
+        <p>Some text?</p>
+    </body>
+</html>
