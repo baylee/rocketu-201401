@@ -1,0 +1,20 @@
+{% load staticfiles %}
+
+<html>
+    <head>
+        <link href="{% static "css/bootstrap.css" %}">
+    </head>
+
+    <body>
+        <div>
+            <a href='{% url "home" %}'>Home</a>
+
+        <div style="float:right">
+            <a href='{% url "about" %}'>About</a>
+            <a href='{% url "support" %}'>Support</a>
+        </div>
+
+        {% block content %}{% endblock content %}
+
+    </body>
+</html>

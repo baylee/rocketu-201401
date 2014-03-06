@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    <h1>Products for {{ category.name }}</h1>
+
+    {% for product in products %}
+        <div>
+            <div>
+                <img src="{% static product.hero_picture.url %}">
+            </div>
+            <div>
+                Name: {{ product.name }}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock content %}
