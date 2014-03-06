@@ -1,0 +1,10 @@
+<html>
+    <body>
+        <form method="post">
+            {% csrf_token %}
+            {{ signup_form.as_p }}
+
+            <input type="submit" name="submit" value="Sign up!">
+        </form>
+    </body>
+</html>
