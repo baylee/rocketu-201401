@@ -1,0 +1,729 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>REST APIs and Tastypie</title>
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="{% get_static_prefix %}css/reveal.min.css">
+		<link rel="stylesheet" href="{% get_static_prefix %}css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="{% get_static_prefix %}lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="{% get_static_prefix %}css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="{% get_static_prefix %}lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>REST APIs and Tastypie</h1>
+					<p>
+						<small>For <a href="http://rocketspace.com/rocketu">RocketU</a></small>
+					</p>
+				</section>
+
+                <section>
+                    <h2>Follow Along</h2>
+                    <p>
+                        <a href="https://github.com/bayleefeore/rocketu-201401/tree/master/week7">Github</a>
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Game Plan</h2>
+                    <ul>
+                        <li>Vocabulary</li>
+                        <li>The Basics</li>
+                        <li>Customization</li>
+                        <li>Lab!</li>
+                        <li>Under the Hood</li>
+                        <li>Advanced Usage</li>
+                        <li>Tool Kit</li>
+                        <li>Lab!</li>
+                    </ul>
+                </section>
+
+				<section>
+                    <section>
+                        <h2>Vocabulary and Review</h2>
+                        <ul>
+                            <li>What's an API?</li>
+                            <li>What's REST?</li>
+                            <li>CRUD</li>
+                            <li>Example Calls</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>What's an API?</h2>
+                        <h4>Application Programming Interface</h4>
+                        <p>
+                            A protocol for specifying how software should interact with each other.
+                        </p>
+                    </section>
+                    <section>
+                        <h2>What's REST?</h2>
+                        <h4>Representational State Transfer</h4>
+                        <p>
+                            It is a Web API protocol for HTTP.
+                            <br><br>
+                            URIs (Uniform Resource Identifiers) along with verbs (GET, POST, etc) are used to represent resources / objects / models.
+                        </p>
+                    </section>
+                    <section>
+                        <h2>CRUD</h2>
+                        <h4>Create Read Update Delete</h4>
+                        <p>These are verbs used in REST to describe the action the server should take.</p>
+                        <br>
+                        <p>
+                            POST -> Create <br>
+                            GET -> Read <br>
+                            PUT -> Update <br>
+                            DELETE -> Delete <br>
+                            <br><br>
+                            Easiest explanation (but there's much more to REST)
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Example REST API Calls</h2>
+					<pre><code data-trim>
+GET http://127.0.0.1:8000/student/
+
+POST http://127.0.0.1:8000/student/
+{
+    'first_name': 'Geoff',
+    'last_name': 'Boss',
+}
+
+PUT http://127.0.0.1:8000/student/1/
+{
+    'first_name': 'Geoff',
+    'last_name': 'Hoverboard',
+}
+
+DELETE http://127.0.0.1:8000/student/1/
+					</code></pre>
+                    </section>
+				</section>
+                <section>
+                    <section>
+                        <h2>The Basics</h2>
+                        <ul>
+                            <li>Install</li>
+                            <li>Models</li>
+                            <li>Fixtures</li>
+                            <li>Resources</li>
+                            <li>Fields</li>
+                            <li>Meta</li>
+                            <li>Hooking it Up</li>
+                            <li>Let's Try it Out</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Install</h2>
+                        <p>
+                            <pre><code>
+pip install django-tastypie
+pip install django-tastypie-swagger
+
+app/
+    api/
+        resources.py
+        authentication.py
+        authorization.py
+        fields.py
+
+INSTALLED_APPS = (
+    ...
+    "tastypie",
+)
+                            </code></pre>
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Models</h2>
+                        <p>Here's the example models we'll be using:</p>
+                        <p>
+                            <pre><code>
+class Class(models.Model):
+    title = models.CharField(max_length=75)
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    def __unicode__(self):
+        return self.title
+
+
+class Student(models.Model):
+    klass = models.ForeignKey(Class, related_name="students")
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return "{0} {1}".format(self.first_name, self.last_name)
+                            </code></pre>
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Fixtures</h2>
+                        <p>
+                            With Django fixtures you can save and load json files to your database.
+                        </p>
+                        <p>
+                            <pre><code>
+python manage.py syncdb
+
+python manage.py migrate lecture
+
+python manage.py dumpdata > lecture/fixtures/data.json
+
+python manage.py loaddata lecture/fixtures/data.json
+                            </code></pre>
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Resources</h2>
+                        <p>Here's an example resource for our Student model. We create a resource for each model, specify the queryset the resource should use, and the resource name which is what is used in the url.</p>
+                        <p>
+                            <pre><code>
+from tastypie.resources import ModelResource
+from lecture.models import Student, Class
+
+class StudentResource(ModelResource):
+    class Meta:
+        queryset = Student.objects.all()
+        resource_name = "student"
+                            </code></pre>
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Fields</h2>
+                        <p>
+                            You use the ToManyField and ToOneField in order to get data from other related models. Here's an example where the class API will also return the list of students for each class.
+                            <pre><code>
+class StudentResource(ModelResource):
+    class Meta:
+        queryset = Student.objects.all()
+        resource_name = "student"
+
+
+class ClassResource(ModelResource):
+    students = ToManyField(StudentResource, 'students', full=True)
+
+    class Meta:
+        queryset = Class.objects.all()
+        resource_name = "class"
+                            </code></pre>
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Hooking it Up</h2>
+                        <p>
+                            In order to set our API's up we need to register our resources in urls.py. We can create different APIs to create different versions by using the api_name parameter.
+                            <pre><code class="python">
+v1_api = Api(api_name="v1")
+v1_api.register(StudentResource())
+v1_api.register(ClassResource())
+
+urlpatterns = patterns("",
+    ...
+
+    url(r'^api/', include(v1_api.urls)),
+)
+                            </code></pre>
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Let's Try it Out</h2>
+                        <p>
+                            <a href="/api/v1/class?format=json" target="_blank">Try It</a>
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Meta</h2>
+                        <p>
+                            Tastypie comes with built in pagination. The meta object you see in the JSON response gives you information about the total amount of items, how many you're getting at a time, and what urls get the next or previous set of items.
+                            <pre><code class="json">
+meta: {
+    limit: 5,
+    next: "/api/v1/student/?offset=5&limit=5&format=json",
+    offset: 0,
+    previous: null,
+    total_count: 11
+}
+                            </code></pre>
+                        </p>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Customization</h2>
+                        <ul>
+                            <li>Basic Options</li>
+                            <li>Authentication</li>
+                            <li>Authorization</li>
+                            <li>Custom Authorization</li>
+                            <li>Filtering</li>
+                            <li>Caching</li>
+                            <li>Format</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Basic Options</h2>
+                        <p>
+                            <pre><code class="python">
+class ClassResource(ModelResource):
+    class Meta:
+        ...
+        allowed_methods = ['get', 'post']   # Limit the possible REST actions
+        fields = ['title']                  # Define which fields should be included in the data returned
+        excludes = ['end_date']             # Return all the fields except the ones specified
+        always_return_data = True           # Whether data should be returned when a POST is made
+        limit = 20                          # Number of objects per call in the list for pagination
+        ordering = ['-start_date']          # Default the order of the objects returned in this list
+                            </code></pre>
+                            Plenty of more options to be used - <a href="http://django-tastypie.readthedocs.org/en/latest/resources.html#resource-options-aka-meta">ResourceOptions</a>
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Authentication</h2>
+                        <p>
+                            How do we authenticate users through Tastypie?<br>
+                            <ul>
+                                <li>Authentication - Default setting on a resource, means this resource doesn't require login</li>
+                                <li>BasicAuthentication - Basic HTTP Authentication, user:pass is base64 encoded in the Authorization header</li>
+                                <li>ApiKeyAuthentication - Uses an API key to authenticate, in a similar fashion as popular social media REST APIs</li>
+                            </ul>
+                            <pre><code class="python">
+class ClassResource(ModelResource):
+    class Meta:
+        ...
+        authentication = BasicAuthentication()
+                            </code></pre>
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Authorization</h2>
+                        <p>
+                            What data in a model does a user have access to? <br>
+                            <ul>
+                                <li>Authorization - No permission checking whatsoever (BE CAREFUL!)</li>
+                                <li>ReadOnlyAuthorization - Default setting on a resource, only permits GET calls</li>
+                                <li>DjangoAuthorization - Uses built in Django permission system based on models</li>
+                            </ul>
+                            <pre><code class="python">
+class ClassResource(ModelResource):
+    class Meta:
+        ...
+        authorization = ReadOnlyAuthorization()
+                            </code></pre>
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Custom Authorization</h2>
+                        <p>
+                            Allow a user to only read, create, or update objects associated with them.
+                            <pre><code class="python">
+class UserObjectsOnlyAuthorization(Authorization):
+    def read_list(self, object_list, bundle):
+        return object_list.filter(user=bundle.request.user)
+
+    def read_detail(self, object_list, bundle):
+        return bundle.obj.user == bundle.request.user
+
+    def create_list(self, object_list, bundle):
+        return object_list
+
+    def create_detail(self, object_list, bundle):
+        return bundle.obj.user == bundle.request.user
+
+    def update_list(self, object_list, bundle):
+        allowed = []
+
+        # Since they may not all be saved, iterate over them.
+        for obj in object_list:
+            if obj.user == bundle.request.user:
+                allowed.append(obj)
+
+        return allowed
+
+    def update_detail(self, object_list, bundle):
+        return bundle.obj.user == bundle.request.user
+
+    def delete_list(self, object_list, bundle):
+        raise Unauthorized("Sorry, no deletes.")
+
+    def delete_detail(self, object_list, bundle):
+        raise Unauthorized("Sorry, no deletes.")
+                            </code></pre>
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Filtering</h2>
+                        <p>
+                            Can list related resources or individual fields
+                            <pre><code class="python">
+class ClassResource(ModelResource):
+    class Meta:
+        ...
+        filtering = {
+            'students': ALL_WITH_RELATIONS,
+            'title': ['contains', 'icontains'],
+            'start_date': ['gt',]
+        }
+                            </code></pre>
+                            <br>
+                            <a href="/api/v1/class/?start_date__gt=2014-01-01&format=json" target="_blank">Try It</a>
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Caching</h2>
+                        <p>
+                            Limited out of the box options - SimpleCache or NoCache
+                            <pre><code class="python">
+class StudentResource(ModelResource):
+    class Meta:
+        ...
+        cache = SimpleCache(60) # Cache this response for 60 seconds
+                            </code></pre>
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Format</h2>
+                        <p>
+                            Tastypie comes with multiple serializer options - json, xml, yaml, html, plist, jsonp <br>
+                            When in doubt, just support json.
+                        </p>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Lab!</h2>
+                        <p>Let's build on top of our Class and Student models to keep track of student projects.</p>
+                        <ol>
+                            <li>Using the previous APIs we had created, delete a Student from your class</li>
+                            <li>Using the previous APIs we had created, update your Student's name</li>
+                            <li>Create a StudentProject model. <b>NOTE:</b> A Student could have more than one project.</li>
+                            <li>Create a Resource for the StudentProject model to get a list of all of the student projects.</li>
+                            <li>Tie the StudentResource to the StudentProjectResource so that when you get a list of students, you also get their list of projects.</li>
+                            <li>Using the APIs you created, create a new StudentProject tied to the Student representing you in your database.</li>
+                        </ol>
+                        <br><br>
+                        <small>Lets demo Postman (an API tool) for POSTing a new Student to a Class</small>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Under the Hood</h2>
+                        <ul>
+                            <li>What is a Bundle?</li>
+                            <li>Hydrate & Dehydrate</li>
+                            <li>From URI -> Object</li>
+                            <li>Object -> Response</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>What is a Bundle?</h2>
+                        <p>
+                            A bundle is made up of data and an object <br><br>
+                            Data - Information about the request being made <br>
+                            Object - The instance we're trying to create, read, update, delete
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Hydrate & Dehydrate</h2>
+                        <p>These are the important data manipulation processes of Tastypie. They happen when a request is first received and when a response is given.</p>
+                        <p>
+                            Hydrate - Serialized data, for example - JSON from a POST request, needs to be deserialized for the ORM to use
+                            <br><br>
+                            Dehydrate - The model's values are prepared to be serialized, for example - to a JSON response
+                        </p>
+                    </section>
+                    <section>
+                        <h2>From URI -> Object(s)</h2>
+                        <p>
+                            <ol>
+                                <li>A request first comes to Tastypie - /api/v1/student/?format=json</li>
+                                <li>Validation is run on our resource's settings to make sure this API call is valid, such as Authorization, Authentication, and allowed_methods</li>
+                                <li>We either call the _detail() or _list() function depending if we have a single or multiple objects</li>
+                                <li>We call get_(), post_(), put_(), delete_() based upon the HTTP method use in the API call</li>
+                                <li>The data is then hydrated into an actual Django model and then put into the bundle</li>
+                            </ol>
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Object(s) -> Response</h2>
+                        <p>
+                            <ol>
+                                <li>Any filters defined by the resource or API call are applied to the object(s)</li>
+                                <li>The bundle's object(s) then have their verb committed to the database (ex. created, updated, or deleted)</li>
+                                <li>Depending on the call, the list of objects are then ordered and paginated</li>
+                                <li>Object(s) are then dehydrated into their proper serialized data format (ex. JSON or XML)</li>
+                                <li>The final HTTP response is then created with the dehydrated data</li>
+                            </ol>
+                        </p>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Advanced Usage</h2>
+                        <ul>
+                            <li>Non-Model Resource</li>
+                            <li>Custom URL</li>
+                            <li>Custom Filtering</li>
+                            <li>Performance</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Non-Model Resource</h2>
+                        <p>You can also use Tastypie to create REST APIs that are not based on a Django model from the ORM.</p>
+                        <p>
+                            <pre><code class="python">
+class Version(object):
+    def __init__(self, identifier=None):
+        self.identifier = identifier
+
+class VersionResource(Resource):
+    identifier = fields.CharField(attribute='identifier')
+
+    class Meta:
+        resource_name = 'version'
+        allowed_methods = ['get']
+        object_class = Version
+
+    def detail_uri_kwargs(self, bundle_or_obj):
+        kwargs = {}
+
+        if isinstance(bundle_or_obj, Bundle):
+            kwargs['pk'] = bundle_or_obj.obj.identifier
+        else:
+            kwargs['pk'] = bundle_or_obj['identifier']
+
+        return kwargs
+
+    def get_object_list(self, bundle, **kwargs):
+        return [Version(identifier=settings.VERSION)]
+
+    def obj_get_list(self, bundle, **kwargs):
+        return self.get_object_list(bundle, **kwargs)
+                            </code></pre>
+                            <a href="/api/v1/version/?format=json" target="_blank">Try It</a>
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Custom URL</h2>
+                        <p>You can also define custom urls inside of Tastypie. One example would be to share something to FB via the API.</p>
+                        <p>
+                            <pre><code class="python">
+def prepend_urls(self):
+    return [
+        url(r"^(?P&lt;resource_name&gt;%s)/social_share/(?P&lt;pk&gt;\w[\w/-]*)/$" % self._meta.resource_name, self.wrap_view('social_share'), name="api_social_share"),
+    ]
+
+def social_share(self, request, **kwargs):
+    self.method_check(request, allowed=['post'])
+    self.is_authenticated(request)
+
+    try:
+        report = self._meta.queryset._clone().get(pk=kwargs['pk'])
+    except self._meta.object_class.DoesNotExist:
+        return http.HttpNotFound()
+
+    deserialized = self.deserialize(request, request.raw_post_data, format=request.META.get('CONTENT_TYPE', 'application/json'))
+    bundle = self.build_bundle(obj=report, request=request, data=dict_strip_unicode_keys(deserialized))
+
+    post_to_social_media()
+
+    bundle = self.full_dehydrate(bundle)
+    return self.create_response(request, bundle, response_class=http.HttpAccepted)
+                            </code></pre>
+
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Custom Filtering</h2>
+                        <p>To apply custom filtering to your object you can override the apply_filters function on a resource.</p>
+                        <p>
+                            <pre><code class="python">
+def apply_filters(self, request, applicable_filters):
+    latitude = request.GET.get('latitude')
+    if not latitude:
+        raise BadRequest("Missing latitude parameter")
+
+    longitude = request.GET.get('longitude')
+    if not longitude:
+        raise BadRequest("Missing longitude parameter")
+
+    long_range = get_longitude_range(float(longitude), float(latitude), 30)
+    lat_range = get_latitude_range(float(latitude), 30)
+    applicable_filters['location__longitude__range'] = long_range
+    applicable_filters['location__latitude__range'] = lat_range
+
+    return super(Resource, self).apply_filters(request, applicable_filters)
+                            </code></pre>
+
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Performance</h2>
+                        <p>In order to increase the performance of Tastypie with a small amount of effort you can tweak the queryset given to the resource.</p>
+                        <br>
+
+                        <p><small>In this example we're using Django's prefetch command to get all of the related students in the same query as classes.</small></p>
+                        <p>
+                            <pre><code class="python">
+class Meta:
+    queryset = Student.objects.prefetch_related('student').all()
+                            </code></pre>
+                            <br>
+
+                            <p><small>In this example we're using annotate, which counts the number of students per class on the database level rather than doing this in python per class.</small></p>
+                            <pre><code class="python">
+class Meta:
+    queryset = Student.objects.annotate(student_count=Count('students')).order_by('-student_count')
+                            </code></pre>
+                        </p>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Tool Kit</h2>
+                        <p><a href="http://django-tastypie.readthedocs.org/en/latest/">Offical Tastypie Docs</a></p>
+                        <ul>
+                            <li>Postman</li>
+                            <li>JSON View</li>
+                            <li>Tastypie Swagger</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Postman</h2>
+                        <p>
+                            Chrome plugin that gives you a gui to make REST calls.<br>
+                            Saves your history and let's you name them in groups (i.e. by project)
+                            <br><br>
+                            <a href="https://chrome.google.com/webstore/detail/postman-rest-client/fdmmgilgnpjigdojojpjoooidkmcomcm?hl=en">Chrome Store</a>
+                        </p>
+                    </section>
+                    <section>
+                        <h2>JSON View</h2>
+                        <p>
+                            Chrome plugin that gives you nicely formatted json in your browser.<br><br>
+                            <a href="https://chrome.google.com/webstore/detail/jsonview/chklaanhfefbnpoihckbnefhakgolnmc?hl=en">Chrome Store</a>
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Tastypie Swagger</h2>
+                        <p>
+                            Open source GUI viewer for your tastypie APIs. <br><br>
+                            <a href="https://github.com/concentricsky/django-tastypie-swagger">Github</a> <br><br>
+{#                            <a href="/api/doc/">Try It</a>#}
+                        </p>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Lab!</h2>
+                        <p>Lets create an app that will be a 3rd party file storing API (think Dropbox).</p>
+                        <p>We'll have Users that can upload Media. Media will have a name and a file that it'll store.</p>
+                        <ol>
+                            <li>Set up your Media model in a separate application.</li>
+                            <li>Create Tastypie Resources for these models to be accessed by the API.</li>
+                            <li>Set the Authentication and Authorization on your MediaResource so that users are logging in and only accessing their Media files. There is an authorization class included that you can use in lecture/authorization.py</li>
+                            <li>In order to actually upload a file via Tastypie, we'll need to write our own custom url on our MediaResource.</li>
+                            <small>Hint: See the Custom URL slide and search the internet for how to do this or checkout this <a href="https://github.com/YetiHQ/manticore-tastypie-core">github</a> which has an example.</small>
+                        </ol>
+                    </section>
+                </section>
+
+                <section>
+                    <h2>The End</h2>
+                    <p>
+                        Questions? <br><br>
+
+                        <small>For <a href="http://rocketspace.com/rocketu">RocketU</a></small>
+                    </p>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Bonus Topics!</h2>
+                        <p>Extra topics we can chat about if we have time or you can research on your own:</p>
+                        <ol>
+                            <li>Passing Custom Values</li>
+                            <li>Overwriting Dehydrate</li>
+                        </ol>
+                    </section>
+
+{#                    <section>#}
+{#                        <h2>Passing Custom Values</h2>#}
+{#                    </section>#}
+{##}
+{#                    <section>#}
+{#                        <h2>Overwriting Dehydrate</h2>#}
+{#                    </section>#}
+                </section>
+
+			</div>
+
+		</div>
+
+		<script src="{% get_static_prefix %}lib/js/head.min.js"></script>
+		<script src="{% get_static_prefix %}js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+                // The "normal" size of the presentation, aspect ratio will be preserved
+                // when the presentation is scaled to fit different resolutions. Can be
+                // specified using percentage units.
+                width: 1280,
+                height: 500,
+
+                // Factor of the display size that should remain empty around the content
+                margin: 0.1,
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '{% get_static_prefix %}lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '{% get_static_prefix %}plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '{% get_static_prefix %}plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '{% get_static_prefix %}plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '{% get_static_prefix %}plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '{% get_static_prefix %}plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+		</script>
+	</body>
+</html>
