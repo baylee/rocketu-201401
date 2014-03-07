@@ -1,4 +1,5 @@
 from django.conf import settings
+from tastypie.authorization import Authorization
 from tastypie.bundle import Bundle
 from tastypie.constants import ALL_WITH_RELATIONS
 from tastypie.fields import ToManyField, CharField
@@ -10,14 +11,16 @@ class StudentResource(ModelResource):
     class Meta:
         queryset = Student.objects.all()
         resource_name = "student"
+        authorization = Authorization()
 
 
 class ClassResource(ModelResource):
-    students = ToManyField(StudentResource, 'students', full=True)
+    students = ToManyField(StudentResource, 'students', full=True, null=True)
 
     class Meta:
         queryset = Class.objects.all()
         resource_name = "class"
+        authorization = Authorization()
         filtering = {
             'students': ALL_WITH_RELATIONS,
             'title': ['contains', 'icontains'],
