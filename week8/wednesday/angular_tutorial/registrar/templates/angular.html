@@ -1,0 +1,26 @@
+{% load staticfiles %}
+
+<html>
+    <head>
+        <!-- jQuery -->
+        <script type="text/javascript" src="{% static 'js/vendor/jquery-1.11.0.js' %}"></script>
+
+        <!-- Angular -->
+        <script type="text/javascript" src="{% static 'js/vendor/angular.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/vendor/angular-route.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/vendor/angular-resource.js' %}"></script>
+
+        <!-- Apps -->
+        <script type="text/javascript" src="{% static 'js/app.js' %}"></script>
+
+        <!-- Controllers -->
+        <script type="text/javascript" src="{% static 'js/controllers/index.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/controllers/add_student.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/controllers/add_project.js' %}"></script>
+    </head>
+    <body>
+        <div ng-app="registrar">
+            <div ng-view></div>
+        </div>
+    </body>
+</html>

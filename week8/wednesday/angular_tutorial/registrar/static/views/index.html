@@ -1,0 +1,14 @@
+<h1>Student List</h1>
+
+<a href="#/add/student/">Add New Student</a>
+
+<a href="#/add/project/">Add New Project</a>
+
+<ul ng-repeat="student in students">
+    <li>{{ student.first_name }} {{ student.last_name }}</li>
+
+    <div ng-show="student.projects"><i>Projects</i></div>
+    <ul ng-repeat="project in student.projects">
+        <li>{{ project.name }}</li>
+    </ul>
+</ul>

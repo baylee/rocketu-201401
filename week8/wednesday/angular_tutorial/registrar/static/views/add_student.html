@@ -1,0 +1,17 @@
+<h1>Add New Student</h1>
+
+<form ng-submit="submitForm()">
+    <div>
+        First Name: <input type="text" ng-model="student.first_name">
+    </div>
+
+    <div>
+        Last Name: <input type="text" ng-model="student.last_name">
+    </div>
+
+    <div>
+        Class: <select ng-model="student.klass" ng-options="class.resource_uri as class.title for class in classes"></select>
+    </div>
+
+    <input type="submit" value="Add Student">
+</form>

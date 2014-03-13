@@ -1,0 +1,13 @@
+<h1>Add New Project</h1>
+
+<form ng-submit="submitForm()">
+    <div>
+        Project Name: <input type="text" ng-model="project.name">
+    </div>
+
+    <div>
+        Student: <select ng-model="project.student" ng-options="student.resource_uri as student.first_name + ' ' + student.last_name for student in students"></select>
+    </div>
+
+    <input type="submit" value="Add Project">
+</form>
